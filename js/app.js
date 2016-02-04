@@ -242,3 +242,36 @@ var dnd = new DnDFileController('body', function(data) {
 });
 
 loadInitialFile(launchData);
+
+$(document).ready(function () {
+	console.log('js ready!');
+	$("#test_writedir").click(function(){
+		console.log("click test_writedir");
+		chrome.fileSystem.chooseEntry({type:'openDirectory'}, function(entry) {
+			chrome.fileSystem.getWritableEntry(entry, function(entry) {
+				entry.getFile('file1.txt', {create:true}, function(entry) {
+					entry.createWriter(function(writer) {
+						writer.write(new Blob(['Lorem'], {type: 'text/plain'}));
+					});
+				});
+				entry.getFile('file2.txt', {create:true}, function(entry) {
+					entry.createWriter(function(writer) {
+						writer.write(new Blob(['Ipsum'], {type: 'text/plain'}));
+					});
+				});
+				entry.getDirectory('myFolder', { create: true }, function(entry) {
+					console.log('myFolder created');
+					entry.getFile('file3.txt', {create:true}, function(entry) {
+						entry.createWriter(function(writer) {
+							writer.write(new Blob(['In the folder!!'], {type: 'text/plain'}));
+						});
+					});
+				}, function(error) {
+					console.log(errror);
+				});
+			});
+		});
+	});
+});
+
+
